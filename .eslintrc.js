@@ -30,22 +30,25 @@ module.exports = {
         'simple-import-sort',
         'typescript-sort-keys',
         'sort-keys-fix',
-        'sort-destructure-keys'
+        'sort-destructure-keys',
+        'better-styled-components'
     ],
 
     rules: {
         '@typescript-eslint/no-empty-interface': 'off',
         '@typescript-eslint/no-explicit-any': 'off',
+        'better-styled-components/sort-declarations-alphabetically': 2,
         'eol-last': ['error', 'always'],
         'import/first': 'off',
         'import/newline-after-import': 'off',
         'import/no-duplicates': 'off',
         'newline-before-return': 'error',
         quotes: ['error', 'single'],
+        'react/prop-types': 'off',
         'simple-import-sort/sort': [
             'warn',
             {
-                groups: [['^react$', '^styled-components$', '^\\u0000'], ['^helpers']]
+                groups: [['^react', '^@?\\w'], ['^components'], ['^helpers']]
             }
         ],
         'sort-destructure-keys/sort-destructure-keys': 2,
