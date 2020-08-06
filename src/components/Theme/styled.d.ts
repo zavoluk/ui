@@ -2,6 +2,9 @@ import 'styled-components';
 
 declare module 'styled-components' {
     export interface DefaultTheme {
+        animation: {
+            transition: string;
+        };
         borderRadius: string;
         colors: {
             accent: string;

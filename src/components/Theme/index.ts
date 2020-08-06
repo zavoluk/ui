@@ -1,7 +1,10 @@
 import { DefaultTheme } from 'styled-components';
 
 const theme: DefaultTheme = {
-    borderRadius: '4px',
+    animation: {
+        transition: '0.2s'
+    },
+    borderRadius: '8px',
     colors: {
         accent: '#ff9800',
         error: '#ff5722',
