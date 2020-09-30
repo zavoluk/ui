@@ -1,18 +1,30 @@
 import React from 'react';
+import { boolean, text } from '@storybook/addon-knobs';
 
-import addonKnobs from 'helpers/addonKnobs';
+import Button from 'components/Button';
 
 import Input from './index';
 
-const data = {
+export default {
+    argTypes: {
+        disabled: boolean('disabled', false),
+        placeholder: text('placeholder', 'placeholder'),
+        title: text('title', 'Title')
+    },
     parameters: {
         info: { text: '#### Компонент "Поле ввода"' }
     },
-    placeholder: 'placeholder'
+    title: 'components/Input'
 };
 
-export default { title: 'components/Input' };
-
 export const _default = (): JSX.Element => {
-    return <Input {...addonKnobs(data)} />;
+    return (
+        <>
+            <Input />
+            <div>
+                <br />
+                <Button>Кнопка</Button>
+            </div>
+        </>
+    );
 };
