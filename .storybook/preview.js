@@ -1,11 +1,11 @@
 import React from 'react'
 import { ThemeProvider } from 'styled-components';
-import { configure, addDecorator, addParameters } from '@storybook/react';
+import { addDecorator, addParameters } from '@storybook/react';
 import { withKnobs } from '@storybook/addon-knobs';
 import { withInfo } from '@storybook/addon-info';
 import { INITIAL_VIEWPORTS } from '@storybook/addon-viewport';
 
-import theme from '../src/components/Theme'
+import theme from '../src/Theme'
 
 addDecorator(
     withInfo({
@@ -27,16 +27,8 @@ addParameters({
     }
 });
 
-function loadStories() {
-    const req = require.context('components', true, /story\.(t|j)sx$/);
-
-    return req.keys().map(filename => req(filename));
-}
-
 addDecorator(StoryFn => (
     <ThemeProvider theme={theme}>
         <StoryFn/>
     </ThemeProvider>
 ));
-
-configure(loadStories, module);
