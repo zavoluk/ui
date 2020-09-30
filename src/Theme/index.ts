@@ -6,13 +6,13 @@ const theme: DefaultTheme = {
     },
     borderRadius: '8px',
     colors: {
-        accent: '#ff9800',
-        error: '#ff5722',
+        accent: '#F72585',
+        error: '#ff4722',
         info: '#2196f3',
-        primary: '#00bcd4',
+        primary: '#7209B7',
         secondary: '#607d8b',
         success: '#4caf50',
-        warning: '#e91e63'
+        warning: '#f78725'
     },
     typography: {
         fontSize: {
