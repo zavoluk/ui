@@ -37,12 +37,15 @@ module.exports = {
     rules: {
         '@typescript-eslint/no-empty-interface': 'off',
         '@typescript-eslint/no-explicit-any': 'off',
+        '@typescript-eslint/no-unused-vars': ['error', { varsIgnorePattern: '^_' }],
         'better-styled-components/sort-declarations-alphabetically': 2,
         'eol-last': ['error', 'always'],
         'import/first': 'off',
         'import/newline-after-import': 'off',
         'import/no-duplicates': 'off',
+        'newline-after-var': 'warn',
         'newline-before-return': 'error',
+        'no-unused-vars': ['error', { varsIgnorePattern: '^_' }],
         quotes: ['error', 'single'],
         'react/prop-types': 'off',
         'simple-import-sort/sort': [
