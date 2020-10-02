@@ -1,6 +1,18 @@
-import React, { FC, HTMLAttributes } from 'react';
+import React, { FC, InputHTMLAttributes } from 'react';
 import { darken, transparentize } from 'polished';
 import styled from 'styled-components';
+
+interface Props extends InputHTMLAttributes<HTMLInputElement> {}
+
+const Input: FC<Props> = props => {
+    return (
+        <Wrapper>
+            <InputStyled {...props} />
+        </Wrapper>
+    );
+};
+
+export default Input;
 
 const Wrapper = styled.div`
     display: inline-block;
@@ -9,7 +21,6 @@ const Wrapper = styled.div`
 const InputStyled = styled.input`
     border: 1px solid ${props => props.theme.colors.primary};
     border-radius: ${props => props.theme.borderRadius};
-    color: ${props => props.theme.colors.primary};
     padding: 0.5rem 1rem;
     transition: border-color ${({ theme }) => theme.animation.transition};
     &:hover {
@@ -28,18 +39,7 @@ const InputStyled = styled.input`
     }
     &:disabled {
         background-color: white;
+        cursor: not-allowed;
         opacity: 0.5;
     }
 `;
-
-interface IProps extends HTMLAttributes<HTMLInputElement> {}
-
-const Input: FC<IProps> = props => {
-    return (
-        <Wrapper>
-            <InputStyled {...props} />
-        </Wrapper>
-    );
-};
-
-export default Input;

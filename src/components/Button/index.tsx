@@ -9,7 +9,7 @@ interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
 const Button: FC<Props> = props => {
     const { onClick, type = 'button', ...rest } = props;
 
-    const mouseHandler = useCallback(
+    const clickHandler = useCallback(
         (e: MouseEvent | KeyboardEvent) => {
             const event = e;
 
@@ -19,7 +19,7 @@ const Button: FC<Props> = props => {
     );
 
     return (
-        <Wrapper type={type} onClick={mouseHandler} tabIndex={0} {...rest}>
+        <Wrapper type={type} onClick={clickHandler} tabIndex={0} {...rest}>
             <span tabIndex={-1}>{props.children}</span>
         </Wrapper>
     );
@@ -46,10 +46,6 @@ const Wrapper = styled.button`
             box-shadow: 0 0 10px -2px ${({ theme }) => theme.colors.primary};
         }
     }
-    &:disabled {
-        pointer-events: none;
-        opacity: 0.5;
-    }
     &:active {
         & > span {
             background-color: ${({ theme }) => darken(0.15, theme.colors.primary)};
@@ -57,8 +53,8 @@ const Wrapper = styled.button`
         }
     }
     &:disabled {
-        pointer-events: none;
         opacity: 0.5;
+        cursor: not-allowed;
     }
     & > span {
         background-color: ${({ theme }) => theme.colors.primary};

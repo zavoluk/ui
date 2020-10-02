@@ -1,12 +1,9 @@
-import React from 'react';
+import React, { ComponentProps } from 'react';
 import { select } from '@storybook/addon-knobs';
 
 import Paper, { indentList } from './index';
 
 export default {
-    argTypes: {
-        indent: select('indent', indentList, 'xs')
-    },
     parameters: {
         info: {
             text: `
@@ -19,8 +16,12 @@ export default {
 };
 
 export const _default = (): JSX.Element => {
+    const props: ComponentProps<typeof Paper> = {
+        indent: select<keyof typeof indentList>('indent', indentList, 'xs')
+    };
+
     return (
-        <Paper>
+        <Paper {...props}>
             <div style={{ display: 'inline-flex' }}>Контейнер</div>
         </Paper>
     );

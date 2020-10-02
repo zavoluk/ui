@@ -21,7 +21,8 @@ const theme: DefaultTheme = {
             headline3: '3rem',
             headline4: '2.125rem',
             headline5: '1.5rem',
-            headline6: '1.25rem'
+            headline6: '1.25rem',
+            paragraph: '1rem'
         }
     }
 };
