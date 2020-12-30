@@ -1,225 +1,123 @@
-import React, {
-    cloneElement,
-    ComponentProps,
-    FC,
-    HTMLAttributes,
-    memo,
-    MouseEvent,
-    ReactElement,
-    ReactNode,
-    useCallback,
-    useEffect,
-    useRef,
-    useState
-} from 'react';
-import { createPortal } from 'react-dom';
-import styled, { css } from 'styled-components';
+import React, { createRef, FC, ReactNode, useEffect, useState } from 'react';
+import styled, { createGlobalStyle } from 'styled-components';
 
 import Paper from 'components/Paper';
-
-export const TooltipPositions = [
-    'top',
-    'topLeft',
-    'topRight',
-    'right',
-    'rightTop',
-    'rightBottom',
-    'bottom',
-    'bottomLeft',
-    'bottomRight',
-    'left',
-    'leftTop',
-    'leftBottom'
-] as const;
-
-interface Props extends HTMLAttributes<HTMLDivElement> {
-    children: ReactElement;
-    content: ReactNode;
-    /**
-     * Indent from wrapped element
-     *
-     * @default 0
-     */
-    indent?: number;
-    /**
-     * Ability to interact with tooltip
-     *
-     * @default false
-     */
-    interactive?: boolean;
-    /** Control show/hide state */
+interface Props {
+    animation?: 'zoom' | 'fade';
+    content?: ReactNode;
     isOpen?: boolean;
-    /** Content wrapper properties */
-    paperProps?: ComponentProps<typeof Paper>;
-    /**
-     * @default 'right'
-     */
-    position?: typeof TooltipPositions[number];
+    position?: 'left' | 'top' | 'right' | 'bottom';
 }
 
-const indentAmount = 10;
-// position: [left, top]
-const getPosition = (trigger: HTMLElement, content: HTMLElement) => {
-    const {
-        height: triggerHeight,
-        left: triggerLeft,
-        top: triggerTop,
-        width: triggerWidth
-    } = trigger.getBoundingClientRect();
-    const { height: contentHeight, width: contentWidth } = content.getBoundingClientRect();
-    const indent = parseInt(window.getComputedStyle(content).padding);
-
-    const positions: Record<typeof TooltipPositions[number], [number, number]> = {
-        bottom: [triggerLeft + triggerWidth / 2 - contentWidth / 2, triggerTop + triggerHeight - indent],
-        bottomLeft: [triggerLeft - indent, triggerTop + triggerHeight - indent],
-        bottomRight: [triggerLeft + triggerWidth - contentWidth + indent, triggerTop + triggerHeight - indent],
-        left: [triggerLeft - contentWidth + indent, triggerTop + triggerHeight / 2 - contentHeight / 2],
-        leftBottom: [triggerLeft - contentWidth + indent, triggerTop + triggerHeight - contentHeight + indent],
-        leftTop: [triggerLeft - contentWidth + indent, triggerTop - indent],
-        right: [triggerLeft + triggerWidth - indent, triggerTop + (triggerHeight / 2 - contentHeight / 2)],
-        rightBottom: [triggerLeft + triggerWidth - indent, triggerTop + triggerHeight - contentHeight + indent],
-        rightTop: [triggerLeft + triggerWidth - indent, triggerTop - indent],
-        top: [triggerLeft + triggerWidth / 2 - contentWidth / 2, triggerTop - contentHeight + indent],
-        topLeft: [triggerLeft - indent, triggerTop - contentHeight + indent],
-        topRight: [triggerLeft + triggerWidth - contentWidth + indent, triggerTop - contentHeight + indent]
-    };
-
-    return positions;
-};
+const INDENT = 10;
 
 const Tooltip: FC<Props> = ({
+    animation = 'fade',
     children,
     content,
-    interactive = false,
-    isOpen,
-    paperProps,
-    position = 'right',
-    ...rest
+    isOpen: isOpenProp = false,
+    position: positionProp = 'right'
 }) => {
-    const isControlled = typeof isOpen !== 'undefined';
-    const [styles, setStyles] = useState({ left: 0, opacity: isOpen ? 1 : 0, top: 0 });
-    const [open, setOpen] = useState(!!isOpen);
-    const [render, setRender] = useState(false);
-    const [calculated, setCalculated] = useState(false);
-    const triggerRef = useRef<HTMLElement>(null);
-    const contentRef = useRef<HTMLDivElement>(null);
-    const timerID = useRef<number | undefined>(undefined);
+    if (!React.isValidElement(children)) return null;
+    const triggerRef = createRef<HTMLElement | undefined>();
+    const contentRef = createRef<HTMLDivElement>();
+    const [isOpen, setIsOpen] = useState(isOpenProp);
+    const [position, setPosition] = useState(positionProp);
+    const [contentProperties, setContentProperties] = useState({
+        contentHeight: 0,
+        contentWidth: 0,
+        triggerHeight: 0,
+        triggerLeft: 0,
+        triggerTop: 0,
+        triggerWidth: 0
+    });
 
     useEffect(() => {
-        if (render && triggerRef.current && contentRef.current) {
-            const positions = getPosition(triggerRef.current, contentRef.current);
+        setIsOpen(isOpenProp);
+    }, [isOpenProp]);
 
-            setStyles(styles => ({
-                ...styles,
-                ...{ left: positions[position][0], top: positions[position][1] }
-            }));
-            setTimeout(() => {
-                setCalculated(true);
+    useEffect(() => {
+        setPosition(positionProp);
+    }, [positionProp]);
+
+    useEffect(() => {
+        if (triggerRef.current && contentRef.current) {
+            const { height, left, top, width } = triggerRef.current.getBoundingClientRect();
+            const { height: contentHeight, width: contentWidth } = contentRef.current.getBoundingClientRect();
+
+            setContentProperties({
+                contentHeight,
+                contentWidth,
+                triggerHeight: height,
+                triggerLeft: left,
+                triggerTop: top,
+                triggerWidth: width
             });
-        }
-    }, [render, position]);
-
-    useEffect(() => {
-        if (calculated) {
-            setRender(render);
-        }
-    }, [calculated]);
-
-    useEffect(() => {
-        setOpen(!!isOpen);
-    }, [isOpen]);
-
-    useEffect(() => {
-        if (calculated) {
-            // [enter, leave]
-            const left = position.includes('right')
-                ? [indentAmount, -indentAmount]
-                : position.includes('left')
-                ? [-indentAmount, indentAmount]
-                : [0, 0];
-            const top = position.includes('top')
-                ? [-indentAmount, indentAmount]
-                : position.includes('bottom')
-                ? [indentAmount, -indentAmount]
-                : [0, 0];
-
-            setStyles(prevState => ({
-                left: prevState.left + (open ? left[0] : left[1]),
-                opacity: open ? 1 : 0,
-                top: prevState.top + (open ? top[0] : top[1])
-            }));
-        }
-    }, [open, calculated, position]);
-
-    const handleMouse = useCallback((e: MouseEvent) => {
-        const event = e;
-        const isMouseEnter = event.type === 'mouseenter';
-
-        setOpen(isMouseEnter);
-        window.clearTimeout(timerID.current);
-        if (isMouseEnter) {
-            setRender(true);
-        } else {
-            timerID.current = setTimeout(() => {
-                setRender(false);
-            }, 200);
         }
     }, []);
 
-    const { left, opacity, top } = styles;
+    const { contentHeight, contentWidth, triggerHeight, triggerLeft, triggerTop, triggerWidth } = contentProperties;
 
     return (
         <>
-            {render &&
-                createPortal(
-                    <Wrapper>
-                        <Container
-                            style={{
-                                opacity: `${opacity}`,
-                                padding: `${indentAmount}px`,
-                                transform: `translate3d(${left}px, ${top}px, 0)`
-                            }}
-                            ref={contentRef}
-                            enableTransition={calculated}
-                            interactive={interactive}
-                            onMouseEnter={e => (interactive ? handleMouse(e) : undefined)}
-                            onMouseLeave={e => (interactive ? handleMouse(e) : undefined)}
-                            {...rest}
-                        >
-                            <Paper {...paperProps}>{content}</Paper>
-                        </Container>
-                    </Wrapper>,
-                    document.body
-                )}
-            {cloneElement(children, {
-                onMouseEnter: (e: MouseEvent) => (isControlled ? undefined : handleMouse(e)),
-                onMouseLeave: (e: MouseEvent) => (isControlled ? undefined : handleMouse(e)),
+            <TriggerStyles />
+            {React.cloneElement(children, {
+                className: 'tooltip-trigger',
                 ref: triggerRef
             })}
+            <Content
+                ref={contentRef}
+                isOpen={isOpen}
+                position={position}
+                style={{
+                    left:
+                        triggerLeft +
+                        (position === 'right'
+                            ? triggerWidth
+                            : position === 'left'
+                            ? -contentWidth
+                            : triggerWidth / 2 - contentWidth / 2),
+                    top:
+                        triggerTop +
+                        (position === 'bottom'
+                            ? triggerHeight
+                            : position === 'top'
+                            ? -contentHeight
+                            : triggerHeight / 2 - contentHeight / 2)
+                }}
+            >
+                <Paper>{content}</Paper>
+            </Content>
         </>
     );
 };
 
 export default Tooltip;
 
-const Wrapper = styled.div`
-    left: 0;
-    position: absolute;
-    top: 0;
+const Content = styled.div<Pick<Props, 'isOpen' | 'position'>>`
+    opacity: ${({ isOpen }) => (isOpen ? 1 : 0)};
+    padding: ${({ position }) =>
+        position === 'left'
+            ? `0 ${INDENT}px 0 0:`
+            : position === 'top'
+            ? `0 0 ${INDENT}px 0`
+            : position === 'right'
+            ? `0 0 0 ${INDENT}px`
+            : position === 'bottom'
+            ? `${INDENT}px 0 0 0`
+            : 0};
+    pointer-events: none;
+    position: fixed;
+    transition: opacity ${({ theme }) => theme.animation.transition};
 `;
 
-const Container = styled.div<{ enableTransition: boolean; interactive: boolean }>`
-    opacity: 0;
-    pointer-events: none;
-    position: absolute;
-    transition: ${({ enableTransition, theme }) => (enableTransition ? theme.animation.transition : 0)};
-    will-change: opacity, transform;
-    ${({ interactive }) =>
-        interactive &&
-        css`
-            pointer-events: auto;
-            &:hover {
-                opacity: 1 !important;
+const TriggerStyles = createGlobalStyle`
+    .tooltip-trigger {
+        cursor: pointer;
+        &:hover {
+            & + ${Content} {
+                opacity: 1
             }
-        `}
+        }
+    }
 `;
