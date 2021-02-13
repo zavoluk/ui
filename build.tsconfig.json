@@ -1,9 +1,9 @@
 {
     "extends": "./tsconfig",
     "compilerOptions": {
-        "rootDir": "src/components",
+        "rootDir": "src",
         "outDir": "dist",
         "incremental": true
     },
-    "exclude": ["**/*.story.tsx", "src/helpers"]
+    "exclude": ["**/*.story.tsx"]
 }

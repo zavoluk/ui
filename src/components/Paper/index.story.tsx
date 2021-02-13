@@ -1,12 +1,9 @@
-import React from 'react';
-import { select } from '@storybook/addon-knobs';
+import React, { ComponentProps } from 'react';
+import { boolean, select } from '@storybook/addon-knobs';
 
-import Paper, { indentList } from './index';
+import Paper, { IndentTypes } from './index';
 
 export default {
-    argTypes: {
-        indent: select('indent', indentList, 'xs')
-    },
     parameters: {
         info: {
             text: `
@@ -19,8 +16,13 @@ export default {
 };
 
 export const _default = (): JSX.Element => {
+    const props: ComponentProps<typeof Paper> = {
+        boxShadow: boolean('boxShadow', true),
+        indent: select<IndentTypes>('indent', IndentTypes, IndentTypes.md)
+    };
+
     return (
-        <Paper>
+        <Paper {...props}>
             <div style={{ display: 'inline-flex' }}>Контейнер</div>
         </Paper>
     );

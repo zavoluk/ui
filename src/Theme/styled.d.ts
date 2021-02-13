@@ -23,6 +23,7 @@ declare module 'styled-components' {
                 headline4: string;
                 headline5: string;
                 headline6: string;
+                paragraph: string;
             };
         };
     }

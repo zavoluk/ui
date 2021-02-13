@@ -1,16 +1,9 @@
-import React from 'react';
+import React, { ComponentProps } from 'react';
 import { boolean, text } from '@storybook/addon-knobs';
-
-import Button from 'components/Button';
 
 import Input from './index';
 
 export default {
-    argTypes: {
-        disabled: boolean('disabled', false),
-        placeholder: text('placeholder', 'placeholder'),
-        title: text('title', 'Title')
-    },
     parameters: {
         info: { text: '#### Компонент "Поле ввода"' }
     },
@@ -18,13 +11,11 @@ export default {
 };
 
 export const _default = (): JSX.Element => {
-    return (
-        <>
-            <Input />
-            <div>
-                <br />
-                <Button>Кнопка</Button>
-            </div>
-        </>
-    );
+    const props: ComponentProps<typeof Input> = {
+        disabled: boolean('disabled', false),
+        placeholder: text('placeholder', 'placeholder'),
+        title: text('title', 'Title')
+    };
+
+    return <Input {...props} />;
 };
