@@ -1,9 +1,9 @@
 {
     "extends": "./tsconfig",
     "compilerOptions": {
-        "rootDir": "src",
         "outDir": "dist",
-        "incremental": true
+        "rootDir": "src",
+        "sourceMap": false
     },
     "exclude": ["**/*.story.tsx"]
 }

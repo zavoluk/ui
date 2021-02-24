@@ -1,22 +1,21 @@
 import React, { ComponentProps } from 'react';
 import { boolean, select } from '@storybook/addon-knobs';
 
-import Paper from 'components/Paper';
-
 import Tooltip, { TooltipPositions } from './index';
 
 export default {
     parameters: {
-        info: { text: '#### Компонент "Тултип"' }
+        info: {
+            text: `
+        #### Компонент "Тултип"
+        Ввиду простой реализации, у элемента, у которого показывается тултип, не должно быть \`{ overflow: hidden }\` и значение \`position\` должно быть отличным от \`static\`
+        `
+        }
     },
     title: 'components/Tooltip'
 };
 
-const Content = (
-    <Paper indent='md' boxShadow>
-        Контент тултипа
-    </Paper>
-);
+const Content = <div>Контент тултипа</div>;
 
 export const _default = (): JSX.Element => {
     const props: Omit<ComponentProps<typeof Tooltip>, 'content' | 'children'> = {
