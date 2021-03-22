@@ -1,20 +1,21 @@
 {
     "name": "ui",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "description": "",
     "main": "index.js",
     "scripts": {
         "build": "npm run clear && tsc --project build.tsconfig.json",
         "clear": "rimraf dist",
-        "storybook": "start-storybook"
+        "storybook": "start-storybook",
+        "build:tag:push": "npm run build && bash scripts/set-git-tag.sh --push"
     },
     "keywords": [],
     "author": "",
     "license": "ISC",
     "dependencies": {
         "polished": "^3.6.5",
-        "react": "^16.13.1",
-        "styled-components": "^5.1.1"
+        "react": "^17.0.1",
+        "styled-components": "^5.2.1"
     },
     "files": [
         "dist"
