@@ -20,11 +20,12 @@ addParameters({
          * show addon panel as a vertical panel on the right
          * @type {Boolean}
          */
-        panelPosition: 'right'
+        panelPosition: 'right',
     },
     viewport: {
         viewports: INITIAL_VIEWPORTS
-    }
+    },
+    layout: 'centered'
 });
 
 addDecorator(StoryFn => (
