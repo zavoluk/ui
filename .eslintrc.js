@@ -6,49 +6,53 @@ module.exports = {
     extends: [
         'eslint:recommended',
         'plugin:react/recommended',
-        'plugin:@typescript-eslint/recommended', // Uses the recommended rules from the @typescript-eslint/eslint-plugin
-        'prettier/@typescript-eslint', // Uses eslint-config-prettier to disable ESLint rules from @typescript-eslint/eslint-plugin that would conflict with prettier
-        'plugin:prettier/recommended' // Enables eslint-plugin-prettier and eslint-config-prettier. This will display prettier errors as ESLint errors. Make sure this is always the last configuration in the extends array.
+        'plugin:@typescript-eslint/recommended',
+        'prettier',
+        'plugin:prettier/recommended'
     ],
-
     parser: '@typescript-eslint/parser',
-
-    // Specifies the ESLint parser
     parserOptions: {
-        // Allows for the use of imports
         ecmaFeatures: {
-            jsx: true // Allows for the parsing of JSX
+            jsx: true
         },
-
         ecmaVersion: 2020,
-        // Allows for the parsing of modern ECMAScript features
         sourceType: 'module'
     },
     plugins: [
         '@typescript-eslint',
+        'better-styled-components',
         'prettier',
         'simple-import-sort',
-        'typescript-sort-keys',
-        'sort-keys-fix',
         'sort-destructure-keys',
-        'better-styled-components'
+        'sort-keys-fix',
+        'typescript-sort-keys'
     ],
-
     rules: {
+        '@typescript-eslint/ban-ts-comment': 'off',
+        '@typescript-eslint/explicit-module-boundary-types': 'off',
         '@typescript-eslint/no-empty-interface': 'off',
         '@typescript-eslint/no-explicit-any': 'off',
-        '@typescript-eslint/no-unused-vars': ['error', { varsIgnorePattern: '^_' }],
+        '@typescript-eslint/no-unused-vars': 'off',
         'better-styled-components/sort-declarations-alphabetically': 2,
         'eol-last': ['error', 'always'],
         'import/first': 'off',
         'import/newline-after-import': 'off',
         'import/no-duplicates': 'off',
-        'newline-after-var': 'warn',
         'newline-before-return': 'error',
-        'no-unused-vars': ['error', { varsIgnorePattern: '^_' }],
-        quotes: ['error', 'single'],
+        'no-unused-vars': 'off',
+        'padding-line-between-statements': [
+            'error',
+            { blankLine: 'always', next: ['const', 'let', 'var', 'function'], prev: 'import' },
+            { blankLine: 'always', next: '*', prev: ['const', 'let', 'var'] },
+            {
+                blankLine: 'any',
+                next: ['const', 'let', 'var'],
+                prev: ['const', 'let', 'var']
+            }
+        ],
+        quotes: ['error', 'single', { allowTemplateLiterals: true }],
         'react/prop-types': 'off',
-        'simple-import-sort/sort': [
+        'simple-import-sort/imports': [
             'warn',
             {
                 groups: [['^react', '^@?\\w'], ['^components'], ['^helpers']]
@@ -63,5 +67,10 @@ module.exports = {
             { caseSensitive: true, natural: false, requiredFirst: false }
         ],
         'typescript-sort-keys/string-enum': ['error', 'asc', { caseSensitive: true }]
+    },
+    settings: {
+        react: {
+            version: 'detect'
+        }
     }
 };
