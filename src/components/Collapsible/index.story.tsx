@@ -1,4 +1,4 @@
-import React, { ComponentProps, useState } from 'react';
+import React, { ComponentProps } from 'react';
 import { boolean } from '@storybook/addon-knobs';
 
 import Collapsible from './index';
@@ -10,9 +10,25 @@ export default {
     title: 'components/Collapsible'
 };
 
+const commonProps: ComponentProps<typeof Collapsible> = {
+    header: <div>Переключатель</div>
+};
+
 export const _default = (): JSX.Element => {
+    return (
+        <Collapsible {...commonProps}>
+            {Array(50)
+                .fill(undefined)
+                .map((_, index) => (
+                    <div key={String(index)}>{index}</div>
+                ))}
+        </Collapsible>
+    );
+};
+
+export const Controlled = (): JSX.Element => {
     const props: ComponentProps<typeof Collapsible> = {
-        header: <div>Переключатель</div>,
+        ...commonProps,
         open: boolean('open', false)
     };
 
@@ -24,25 +40,5 @@ export const _default = (): JSX.Element => {
                     <div key={String(index)}>{index}</div>
                 ))}
         </Collapsible>
-    );
-};
-
-export const Controlled = (): JSX.Element => {
-    const [isOpen, setIsOpen] = useState(false);
-    const props: ComponentProps<typeof Collapsible> = {
-        open: boolean('open', false)
-    };
-
-    return (
-        <>
-            <div onClick={() => setIsOpen(isOpen => !isOpen)}>Открыть</div>
-            <Collapsible {...props} open={isOpen}>
-                {Array(50)
-                    .fill(undefined)
-                    .map((_, index) => (
-                        <div key={String(index)}>{index}</div>
-                    ))}
-            </Collapsible>
-        </>
     );
 };
