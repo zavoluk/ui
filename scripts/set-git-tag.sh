@@ -4,25 +4,21 @@ tagName=$PACKAGE_VERSION
 tmpBranch='build/'$PACKAGE_VERSION
 currBranch=$(git rev-parse --symbolic-full-name --abbrev-ref HEAD)
 
-if [[ `git status --porcelain` ]]; then
-    git checkout -b $tmpBranch
+git checkout -b $tmpBranch
 
-    echo 'Set tag' $tagName
+echo 'Set tag' $tagName
 
-    # commit pipe
-    git add .
-    git commit -m 'Build version '$PACKAGE_VERSION
+# commit pipe
+git add --force dist
+git commit -m 'Build version '$PACKAGE_VERSION
+git rm -fr --cached dist
 
-    # tag pipe
-    git tag -d $tagName
-    git tag -a $tagName -m $tagName
-    git push origin $tagName --force
+# tag pipe
+git tag -d $tagName
+git tag -a $tagName -m $tagName
+git push origin $tagName --force
 
-    echo 'Tag '$tagName' added successfully!'
+echo 'Tag '$tagName' added successfully!'
 
-    git checkout $currBranch;
-    git branch -D $tmpBranch
-
-else
-  echo 'No git changes'
-fi
+git checkout $currBranch;
+git branch -D $tmpBranch
